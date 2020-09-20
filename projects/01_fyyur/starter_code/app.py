@@ -341,6 +341,12 @@ def create_venue_submission():
     venue.address = request.form.get('address', '')
     venue.phone = request.form.get('phone', '')
     venue.genres = json.dumps(request.form.getlist('genres'))
+    if (request.form.get('seeking_talent', False) == 'y'):
+      venue.seeking_talent = True
+    else:
+      venue.seeking_talent = False
+    venue.seeking_description = request.form.get('seeking_description', '')
+    venue.website = request.form.get('website', '')
     venue.facebook_link = request.form.get('facebook_link', '')
     venue.image_link = request.form.get('image_link', '')
     db.session.add(venue)
@@ -389,8 +395,14 @@ def edit_venue_submission(venue_id):
   venue.state = request.form.get('state', '')
   venue.address = request.form.get('address', '')
   venue.phone = request.form.get('phone', '')
-  venue.image_link = request.form.get('image_link', '')
   venue.genres = json.dumps(request.form.getlist('genres'))
+  if (request.form.get('seeking_talent', False) == 'y'):
+    venue.seeking_talent = True
+  else:
+    venue.seeking_talent = False
+  venue.seeking_description = request.form.get('seeking_description', '')
+  venue.website = request.form.get('website', '')
+  venue.image_link = request.form.get('image_link', '')
   venue.facebook_link = request.form.get('facebook_link', '')
   db.session.commit()
   return redirect(url_for('show_venue', venue_id=venue_id))
@@ -609,6 +621,12 @@ def create_artist_submission():
     artist.phone = request.form.get('phone', '')
     artist.image_link = request.form.get('image_link', '')
     artist.genres = json.dumps(request.form.getlist('genres'))
+    if (request.form.get('seeking_venue', False) == 'y'):
+      artist.seeking_venue = True
+    else:
+      artist.seeking_venue = False
+    artist.seeking_description = request.form.get('seeking_description', '')
+    artist.website = request.form.get('website', '')
     artist.facebook_link = request.form.get('facebook_link', '')
     db.session.add(artist)
     db.session.commit()
@@ -654,6 +672,12 @@ def edit_artist_submission(artist_id):
   artist.city = request.form.get('city', '')
   artist.state = request.form.get('state', '')
   artist.phone = request.form.get('phone', '')
+  if (request.form.get('seeking_venue', False) == 'y'):
+    artist.seeking_venue = True
+  else:
+    artist.seeking_venue = False
+  artist.seeking_description = request.form.get('seeking_description', '')
+  artist.website = request.form.get('website', '')
   artist.image_link = request.form.get('image_link', '')
   artist.genres = json.dumps(request.form.getlist('genres'))
   artist.facebook_link = request.form.get('facebook_link', '')
