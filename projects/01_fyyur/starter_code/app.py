@@ -367,8 +367,49 @@ def delete_venue(venue_id):
   finally:
     return render_template('pages/home.html')
 
+#  Update Venue
+#  ----------------------------------------------------------------
+
+@app.route('/venues/<int:venue_id>/edit', methods=['GET'])
+def edit_venue(venue_id):
+  # TODO: populate form with values from venue with ID <venue_id> - DONE
+  venue = Venue.query.get(venue_id)
+  venue.genres = json.loads(venue.genres)
+  form = VenueForm(obj=venue)
+  # venue={
+  #   "id": 1,
+  #   "name": "The Musical Hop",
+  #   "genres": ["Jazz", "Reggae", "Swing", "Classical", "Folk"],
+  #   "address": "1015 Folsom Street",
+  #   "city": "San Francisco",
+  #   "state": "CA",
+  #   "phone": "123-123-1234",
+  #   "website": "https://www.themusicalhop.com",
+  #   "facebook_link": "https://www.facebook.com/TheMusicalHop",
+  #   "seeking_talent": True,
+  #   "seeking_description": "We are on the lookout for a local artist to play every two weeks. Please call us.",
+  #   "image_link": "https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60"
+  # }
+  return render_template('forms/edit_venue.html', form=form, venue=venue)
+
+@app.route('/venues/<int:venue_id>/edit', methods=['POST'])
+def edit_venue_submission(venue_id):
+  # TODO: take values from the form submitted, and update existing - DONE
+  # venue record with ID <venue_id> using the new attributes
+  venue = Venue.query.get(venue_id)
+  venue.name = request.form.get('name', '')
+  venue.city = request.form.get('city', '')
+  venue.state = request.form.get('state', '')
+  venue.address = request.form.get('address', '')
+  venue.phone = request.form.get('phone', '')
+  venue.genres = json.dumps(request.form.getlist('genres'))
+  venue.facebook_link = request.form.get('facebook_link', '')
+  db.session.commit()
+  return redirect(url_for('show_venue', venue_id=venue_id))
+
 #  Artists
 #  ----------------------------------------------------------------
+
 @app.route('/artists')
 def artists():
   # TODO: replace with real data returned from querying the database - DONE
@@ -533,80 +574,6 @@ def show_artist(artist_id):
   # data = list(filter(lambda d: d['id'] == artist_id, [data1, data2, data3]))[0]
   return render_template('pages/show_artist.html', artist=data)
 
-#  Update
-#  ----------------------------------------------------------------
-@app.route('/artists/<int:artist_id>/edit', methods=['GET'])
-def edit_artist(artist_id):
-  # TODO: populate form with fields from artist with ID <artist_id> - DONE
-  artist = Artist.query.get(artist_id)
-  artist.genres = json.loads(artist.genres)
-  form = ArtistForm(obj=artist)
-  # artist={
-  #   "id": 4,
-  #   "name": "Guns N Petals",
-  #   "genres": ["Rock n Roll"],
-  #   "city": "San Francisco",
-  #   "state": "CA",
-  #   "phone": "326-123-5000",
-  #   "website": "https://www.gunsnpetalsband.com",
-  #   "facebook_link": "https://www.facebook.com/GunsNPetals",
-  #   "seeking_venue": True,
-  #   "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
-  #   "image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80"
-  # }
-  return render_template('forms/edit_artist.html', form=form, artist=artist)
-
-@app.route('/artists/<int:artist_id>/edit', methods=['POST'])
-def edit_artist_submission(artist_id):
-  # TODO: take values from the form submitted, and update existing - DONE
-  # artist record with ID <artist_id> using the new attributes
-  artist = Artist.query.get(artist_id)
-  artist.name = request.form.get('name', '')
-  artist.city = request.form.get('city', '')
-  artist.state = request.form.get('state', '')
-  artist.phone = request.form.get('phone', '')
-  artist.genres = json.dumps(request.form.getlist('genres'))
-  artist.facebook_link = request.form.get('facebook_link', '')
-  db.session.commit()
-  return redirect(url_for('show_artist', artist_id=artist_id))
-
-@app.route('/venues/<int:venue_id>/edit', methods=['GET'])
-def edit_venue(venue_id):
-  # TODO: populate form with values from venue with ID <venue_id> - DONE
-  venue = Venue.query.get(venue_id)
-  venue.genres = json.loads(venue.genres)
-  form = VenueForm(obj=venue)
-  # venue={
-  #   "id": 1,
-  #   "name": "The Musical Hop",
-  #   "genres": ["Jazz", "Reggae", "Swing", "Classical", "Folk"],
-  #   "address": "1015 Folsom Street",
-  #   "city": "San Francisco",
-  #   "state": "CA",
-  #   "phone": "123-123-1234",
-  #   "website": "https://www.themusicalhop.com",
-  #   "facebook_link": "https://www.facebook.com/TheMusicalHop",
-  #   "seeking_talent": True,
-  #   "seeking_description": "We are on the lookout for a local artist to play every two weeks. Please call us.",
-  #   "image_link": "https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60"
-  # }
-  return render_template('forms/edit_venue.html', form=form, venue=venue)
-
-@app.route('/venues/<int:venue_id>/edit', methods=['POST'])
-def edit_venue_submission(venue_id):
-  # TODO: take values from the form submitted, and update existing - DONE
-  # venue record with ID <venue_id> using the new attributes
-  venue = Venue.query.get(venue_id)
-  venue.name = request.form.get('name', '')
-  venue.city = request.form.get('city', '')
-  venue.state = request.form.get('state', '')
-  venue.address = request.form.get('address', '')
-  venue.phone = request.form.get('phone', '')
-  venue.genres = json.dumps(request.form.getlist('genres'))
-  venue.facebook_link = request.form.get('facebook_link', '')
-  db.session.commit()
-  return redirect(url_for('show_venue', venue_id=venue_id))
-
 #  Create Artist
 #  ----------------------------------------------------------------
 
@@ -641,6 +608,43 @@ def create_artist_submission():
   finally:
     return render_template('pages/home.html')
 
+#  Update Artist
+#  ----------------------------------------------------------------
+
+@app.route('/artists/<int:artist_id>/edit', methods=['GET'])
+def edit_artist(artist_id):
+  # TODO: populate form with fields from artist with ID <artist_id> - DONE
+  artist = Artist.query.get(artist_id)
+  artist.genres = json.loads(artist.genres)
+  form = ArtistForm(obj=artist)
+  # artist={
+  #   "id": 4,
+  #   "name": "Guns N Petals",
+  #   "genres": ["Rock n Roll"],
+  #   "city": "San Francisco",
+  #   "state": "CA",
+  #   "phone": "326-123-5000",
+  #   "website": "https://www.gunsnpetalsband.com",
+  #   "facebook_link": "https://www.facebook.com/GunsNPetals",
+  #   "seeking_venue": True,
+  #   "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
+  #   "image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80"
+  # }
+  return render_template('forms/edit_artist.html', form=form, artist=artist)
+
+@app.route('/artists/<int:artist_id>/edit', methods=['POST'])
+def edit_artist_submission(artist_id):
+  # TODO: take values from the form submitted, and update existing - DONE
+  # artist record with ID <artist_id> using the new attributes
+  artist = Artist.query.get(artist_id)
+  artist.name = request.form.get('name', '')
+  artist.city = request.form.get('city', '')
+  artist.state = request.form.get('state', '')
+  artist.phone = request.form.get('phone', '')
+  artist.genres = json.dumps(request.form.getlist('genres'))
+  artist.facebook_link = request.form.get('facebook_link', '')
+  db.session.commit()
+  return redirect(url_for('show_artist', artist_id=artist_id))
 
 #  Shows
 #  ----------------------------------------------------------------
@@ -700,6 +704,9 @@ def shows():
   # }]
   return render_template('pages/shows.html', shows=data)
 
+#  Create Show
+#  ----------------------------------------------------------------
+
 @app.route('/shows/create')
 def create_shows():
   # renders form. do not touch.
@@ -728,6 +735,9 @@ def create_show_submission():
     flash('An error occurred. Show could not be listed.')
   finally:
     return render_template('pages/home.html')
+
+#------------------------------------------------------------------
+
 
 @app.errorhandler(404)
 def not_found_error(error):
