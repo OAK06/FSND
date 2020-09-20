@@ -52,6 +52,8 @@ class Venue(db.Model):
     seeking_talent = db.Column(db.Boolean)
     seeking_description = db.Column(db.String)
 
+    shows = db.relationship("Show", cascade="all, delete-orphan")
+
 class Artist(db.Model):
     __tablename__ = 'artists'
 
@@ -69,6 +71,8 @@ class Artist(db.Model):
     website = db.Column(db.String(120))
     seeking_venue = db.Column(db.Boolean)
     seeking_description = db.Column(db.String)
+    
+    shows = db.relationship("Show", cascade="all, delete-orphan")
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration. - DONE
 
@@ -154,7 +158,11 @@ def venues():
   #     "num_upcoming_shows": 0,
   #   }]
   # }]
-  return render_template('pages/venues.html', areas=data);
+  if len(data) > 0:
+    return render_template('pages/venues.html', areas=data);
+  else:
+    flash('Currently there are no venues') 
+    return render_template('pages/home.html');
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
@@ -347,23 +355,6 @@ def create_venue_submission():
   finally:
     return render_template('pages/home.html')
 
-@app.route('/venues/<int:venue_id>/delete', methods=['GET'])
-def delete_venue(venue_id):
-  # TODO: Complete this endpoint for taking a venue_id, and using
-  # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail. - DONE
-  # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
-  # clicking that button delete it from the db then redirect the user to the homepage - DONE
-  # return None
-  try:
-    venue = Venue.query.get(venue_id)
-    db.session.delete(venue)
-    db.session.commit()
-  except:
-    db.session.rollback()
-    flash('An error occurred. Venue ' + venue.name + ' could not be deleted.')
-  finally:
-    return render_template('pages/home.html')
-
 #  Update Venue
 #  ----------------------------------------------------------------
 
@@ -405,6 +396,26 @@ def edit_venue_submission(venue_id):
   db.session.commit()
   return redirect(url_for('show_venue', venue_id=venue_id))
 
+#  Delete Venue
+#  ----------------------------------------------------------------
+
+@app.route('/venues/<int:venue_id>/delete', methods=['GET'])
+def delete_venue(venue_id):
+  # TODO: Complete this endpoint for taking a venue_id, and using
+  # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail. - DONE
+  # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
+  # clicking that button delete it from the db then redirect the user to the homepage - DONE
+  # return None
+  try:
+    venue = Venue.query.get(venue_id)
+    db.session.delete(venue)
+    db.session.commit()
+  except:
+    db.session.rollback()
+    flash('An error occurred. Venue ' + venue.name + ' could not be deleted.')
+  finally:
+    return render_template('pages/home.html')
+
 #  Artists
 #  ----------------------------------------------------------------
 
@@ -422,7 +433,11 @@ def artists():
   #   "id": 6,
   #   "name": "The Wild Sax Band",
   # }]
-  return render_template('pages/artists.html', artists=data)
+  if len(data) > 0:
+    return render_template('pages/artists.html', artists=data)
+  else:
+    flash('Currently there are no artists') 
+    return render_template('pages/home.html');
 
 @app.route('/artists/search', methods=['POST'])
 def search_artists():
@@ -646,6 +661,21 @@ def edit_artist_submission(artist_id):
   db.session.commit()
   return redirect(url_for('show_artist', artist_id=artist_id))
 
+#  Delete Artist
+#  ----------------------------------------------------------------
+
+@app.route('/artists/<int:artist_id>/delete', methods=['GET'])
+def delete_artist(artist_id):
+  try:
+    artist = Artist.query.get(artist_id)
+    db.session.delete(artist)
+    db.session.commit()
+  except:
+    db.session.rollback()
+    flash('An error occurred. Artist ' + artist.name + ' could not be deleted.')
+  finally:
+    return render_template('pages/home.html')
+
 #  Shows
 #  ----------------------------------------------------------------
 
@@ -702,7 +732,11 @@ def shows():
   #   "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
   #   "start_time": "2035-04-15T20:00:00.000Z"
   # }]
-  return render_template('pages/shows.html', shows=data)
+  if len(data) > 0:
+    return render_template('pages/shows.html', shows=data)
+  else:
+    flash('Currently there are no shows') 
+    return render_template('pages/home.html');
 
 #  Create Show
 #  ----------------------------------------------------------------
