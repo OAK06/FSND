@@ -33,6 +33,14 @@ migrate = Migrate(app, db)
 # Models.
 #----------------------------------------------------------------------------#
 
+class Show(db.Model):
+    __tablename__ = 'shows'
+
+    id = db.Column(db.Integer, primary_key=True)
+    venue_id = db.Column(db.Integer, db.ForeignKey('venues.id'), nullable=False)
+    artist_id = db.Column(db.Integer, db.ForeignKey('artists.id'), nullable=False)
+    start_time = db.Column(db.DateTime, nullable=False)
+
 class Venue(db.Model):
     __tablename__ = 'venues'
 
@@ -52,7 +60,7 @@ class Venue(db.Model):
     seeking_talent = db.Column(db.Boolean)
     seeking_description = db.Column(db.String)
 
-    shows = db.relationship("Show", cascade="all, delete-orphan")
+    shows = db.relationship(Show, backref='venue', cascade="all, delete")
 
 class Artist(db.Model):
     __tablename__ = 'artists'
@@ -72,17 +80,10 @@ class Artist(db.Model):
     seeking_venue = db.Column(db.Boolean)
     seeking_description = db.Column(db.String)
     
-    shows = db.relationship("Show", cascade="all, delete-orphan")
+    shows = db.relationship(Show, backref='artist', cascade="all, delete")
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration. - DONE
 
-class Show(db.Model):
-    __tablename__ = 'shows'
-
-    id = db.Column(db.Integer, primary_key=True)
-    venue_id = db.Column(db.Integer, db.ForeignKey('venues.id'))
-    artist_id = db.Column(db.Integer, db.ForeignKey('artists.id'))
-    start_time = db.Column(db.DateTime)
 
 #----------------------------------------------------------------------------#
 # Filters.
@@ -117,7 +118,7 @@ def venues():
   venues = Venue.query.all()
   temp = {}
   for venue in venues:
-    shows = Show.query.filter_by(venue_id=venue.id).all()
+    shows = venue.shows
     num_upcoming_shows = 0
     for show in shows:
       if show.start_time > datetime.datetime.now():
@@ -136,7 +137,6 @@ def venues():
   data = []
   for item in temp:
     data.append(temp[item])
-
   # data=[{
   #   "city": "San Francisco",
   #   "state": "CA",
@@ -176,7 +176,7 @@ def search_venues():
     "data": []
   }
   for venue in data:
-    shows = Show.query.filter_by(venue_id=venue.id).all()
+    shows = venue.shows
     num_upcoming_shows = 0
     for show in shows:
       if show.start_time > datetime.datetime.now():
@@ -201,7 +201,7 @@ def show_venue(venue_id):
   # shows the venue page with the given venue_id
   # TODO: replace with real venue data from the venues table, using venue_id - DONE
   venue = Venue.query.get(venue_id)
-  shows = Show.query.filter_by(venue_id=venue_id).all()
+  shows = venue.shows
   data = {
       "id": venue.id,
       "name": venue.name,
@@ -221,7 +221,7 @@ def show_venue(venue_id):
       "upcoming_shows_count": 0
   }
   for show in shows:
-    artist = Artist.query.get(show.artist_id)
+    artist = show.artist
     if show.start_time < datetime.datetime.now():
       data['past_shows'].append({
           "artist_id": artist.id,
@@ -238,7 +238,6 @@ def show_venue(venue_id):
           "start_time": show.start_time.strftime("%Y-%m-%dT%H:%M:%S.%f%z")
       })
       data['upcoming_shows_count'] += 1
-
   # data1={
   #   "id": 1,
   #   "name": "The Musical Hop",
@@ -451,7 +450,7 @@ def search_artists():
     "data": []
   }
   for artist in data:
-    shows = Show.query.filter_by(artist_id=artist.id).all()
+    shows = artist.shows
     num_upcoming_shows = 0
     for show in shows:
       if show.start_time > datetime.datetime.now():
@@ -476,7 +475,7 @@ def show_artist(artist_id):
   # shows the artist page with the given artist_id
   # TODO: replace with real artist data from the artists table, using artist_id - DONE
   artist = Artist.query.get(artist_id)
-  shows = Show.query.filter_by(artist_id=artist_id).all()
+  shows = artist.shows
   data = {
       "id": artist.id,
       "name": artist.name,
@@ -495,7 +494,7 @@ def show_artist(artist_id):
       "upcoming_shows_count": 0
   }
   for show in shows:
-    venue = Venue.query.get(show.venue_id)
+    venue = show.venue
     if show.start_time < datetime.datetime.now():
       data['past_shows'].append({
           "venue_id": venue.id,
@@ -686,8 +685,8 @@ def shows():
   shows = Show.query.all()
   data = []
   for show in shows:
-    venue = Venue.query.get(show.venue_id)
-    artist = Artist.query.get(show.artist_id)
+    venue = show.venue
+    artist = show.artist
     data.append({
       "venue_id": show.venue_id,
       "venue_name": venue.name,
