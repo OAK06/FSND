@@ -51,8 +51,6 @@ class Venue(db.Model):
     website = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean)
     seeking_description = db.Column(db.String)
-    # past_shows_count = db.Column(db.Integer)
-    # upcoming_shows_count = db.Column(db.Integer)
 
 class Artist(db.Model):
     __tablename__ = 'artists'
@@ -71,8 +69,6 @@ class Artist(db.Model):
     website = db.Column(db.String(120))
     seeking_venue = db.Column(db.Boolean)
     seeking_description = db.Column(db.String)
-    # past_shows_count = db.Column(db.Integer)
-    # upcoming_shows_count = db.Column(db.Integer)
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration. - DONE
 
