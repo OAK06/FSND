@@ -5,35 +5,37 @@
 import json
 import dateutil.parser
 import babel
-from flask import Flask, render_template, request, Response, flash, redirect, url_for
+from flask import (
+  Flask, 
+  render_template, 
+  request, 
+  Response, 
+  flash, 
+  redirect, 
+  url_for
+)
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import load_only
 from flask_migrate import Migrate
 import logging
 from logging import Formatter, FileHandler
-from flask_wtf import Form
+from flask_wtf import FlaskForm
 from forms import *
+from models import db, Venue, Artist, Show
 import datetime
 
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
 
-app = Flask(__name__)
-moment = Moment(app)
-app.config.from_object('config')
-db = SQLAlchemy(app)
-
 # TODO: connect to a local postgresql database - DONE
 
+app = Flask(__name__)
+db.init_app(app)
+moment = Moment(app)
+app.config.from_object('config')
 migrate = Migrate(app, db)
-
-#----------------------------------------------------------------------------#
-# Models.
-#----------------------------------------------------------------------------#
-
-from models import *
 
 #----------------------------------------------------------------------------#
 # Filters.
@@ -109,10 +111,10 @@ def venues():
   #   }]
   # }]
   if len(data) > 0:
-    return render_template('pages/venues.html', areas=data);
+    return render_template('pages/venues.html', areas=data)
   else:
     flash('Currently there are no venues') 
-    return render_template('pages/home.html');
+    return render_template('pages/home.html')
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
@@ -398,7 +400,7 @@ def artists():
     return render_template('pages/artists.html', artists=data)
   else:
     flash('Currently there are no artists') 
-    return render_template('pages/home.html');
+    return render_template('pages/home.html')
 
 @app.route('/artists/search', methods=['POST'])
 def search_artists():
@@ -709,7 +711,7 @@ def shows():
     return render_template('pages/shows.html', shows=data)
   else:
     flash('Currently there are no shows') 
-    return render_template('pages/home.html');
+    return render_template('pages/home.html')
 
 #  Create Show
 #  ----------------------------------------------------------------
