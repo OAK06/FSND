@@ -89,6 +89,15 @@ GET '/categories'
 
 ```
 
+## APIs
+Endpoints
+GET '/categories'
+GET '/categories/<int:category_id>/questions'
+GET '/questions/<int:page>'
+POST '/questions'
+POST '/questions/search'
+DELETE '/questions/<int:question_id>/delete'
+POST '/quizzes'
 
 ## Testing
 To run the tests, run
