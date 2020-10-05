@@ -90,7 +90,7 @@ GET '/categories'
 ```
 
 ## APIs
-Endpoints
+### Endpoints
 GET '/categories'
 GET '/categories/<int:category_id>/questions'
 GET '/questions/<int:page>'
@@ -98,6 +98,240 @@ POST '/questions'
 POST '/questions/search'
 DELETE '/questions/<int:question_id>/delete'
 POST '/quizzes'
+
+### Endpoint Examples
+#### GET '/categories' 
+Description: Fetches all available categories.
+Request parameters: None
+Example response:
+```
+{
+  "categories": {
+    "1": "Science",
+    "2": "Art",
+    "3": "Geography",
+    "4": "History",
+    "5": "Entertainment",
+    "6": "Sports"
+  },
+  "success": true
+}
+```
+
+#### GET '/categories/<int:category_id>/questions'
+Description: Fetches questions for a specific category.
+Request argument: ```category_id:int```
+Example response:
+```
+{
+  "categories": {
+    "1": "Science",
+    "2": "Art",
+    "3": "Geography",
+    "4": "History",
+    "5": "Entertainment",
+    "6": "Sports"
+  },
+  "current_category": 1,
+  "questions": [
+    {
+      "answer": "The Liver",
+      "category": 1,
+      "difficulty": 4,
+      "id": 20,
+      "question": "What is the heaviest organ in the human body?"
+    },
+    {
+      "answer": "Alexander Fleming",
+      "category": 1,
+      "difficulty": 3,
+      "id": 21,
+      "question": "Who discovered penicillin?"
+    },
+    {
+      "answer": "Blood",
+      "category": 1,
+      "difficulty": 4,
+      "id": 22,
+      "question": "Hematology is a branch of medicine involving the study of what?"
+    }
+  ],
+  "success": true,
+  "total_questions": 3
+}
+```
+
+#### GET '/questions/<int:page>'
+Description: Fetches paginated questions for all categories.
+Request parameters: ```page:int```
+Example response:
+```
+{
+  "categories": {
+    "1": "Science",
+    "2": "Art",
+    "3": "Geography",
+    "4": "History",
+    "5": "Entertainment",
+    "6": "Sports"
+  },
+  "questions": [
+    {
+      "answer": "Maya Angelou",
+      "category": 4,
+      "difficulty": 2,
+      "id": 5,
+      "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+    },
+    {
+      "answer": "Muhammad Ali",
+      "category": 4,
+      "difficulty": 1,
+      "id": 9,
+      "question": "What boxer's original name is Cassius Clay?"
+    },
+    {
+      "answer": "Apollo 13",
+      "category": 5,
+      "difficulty": 4,
+      "id": 2,
+      "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
+    },
+    {
+      "answer": "Tom Cruise",
+      "category": 5,
+      "difficulty": 4,
+      "id": 4,
+      "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
+    },
+    {
+      "answer": "Edward Scissorhands",
+      "category": 5,
+      "difficulty": 3,
+      "id": 6,
+      "question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"
+    },
+    {
+      "answer": "Brazil",
+      "category": 6,
+      "difficulty": 3,
+      "id": 10,
+      "question": "Which is the only team to play in every soccer World Cup tournament?"
+    },
+    {
+      "answer": "Uruguay",
+      "category": 6,
+      "difficulty": 4,
+      "id": 11,
+      "question": "Which country won the first ever soccer World Cup in 1930?"
+    },
+    {
+      "answer": "George Washington Carver",
+      "category": 4,
+      "difficulty": 2,
+      "id": 12,
+      "question": "Who invented Peanut Butter?"
+    },
+    {
+      "answer": "Lake Victoria",
+      "category": 3,
+      "difficulty": 2,
+      "id": 13,
+      "question": "What is the largest lake in Africa?"
+    },
+    {
+      "answer": "The Palace of Versailles",
+      "category": 3,
+      "difficulty": 3,
+      "id": 14,
+      "question": "In which royal palace would you find the Hall of Mirrors?"
+    }
+  ],
+  "success": true,
+  "total_questions": 19
+}
+```
+
+#### POST '/questions/search' 
+Description: Add a new question to the repository of available questions.
+Request body: 
+```
+{
+  question:string, 
+  answer:string, 
+  difficulty:int, 
+  category:string
+}
+```
+Example response:
+```
+{
+  "created": 24, 
+  "success": true
+}
+```
+
+#### POST '/questions/search' 
+Description: Fetches questions where a substring matches the search term.
+Request body: 
+```
+{
+  searchTerm:string
+}
+```
+Example response:
+```
+{
+  "current_category": null,
+  "questions": [{
+    "answer": "Maya Angelou",
+    "category": 4,
+    "difficulty": 2,
+    "id": 5,
+    "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+  }],
+  "success": true,
+  "total_questions": 1
+}
+```
+
+#### DELETE '/questions/<int:question_id>/delete'
+Description: Delete a question.
+Request arguments: ```question_id:int```
+Example response:
+```
+{
+  "deleted": "24", 
+  "success": true
+}
+```
+
+#### POST '/quizzes'
+Description: Fetches a random question within a specified category. Previously asked questions are not asked again.
+Request body: 
+```
+{
+    previous_questions: array, 
+    quiz_category: {
+        id:int, 
+        type:string
+    }
+}
+```
+Example response:
+```
+{
+  "question": {
+    "answer": "Alexander Fleming",
+    "category": 1,
+    "difficulty": 3,
+    "id": 21,
+    "question": "Who discovered penicillin?"
+  },
+  "success": true
+}
+```
+
 
 ## Testing
 To run the tests, run
